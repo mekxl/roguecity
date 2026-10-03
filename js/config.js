@@ -23,12 +23,43 @@ const Config = {
   economy: {
     foodPerPerson: 0.05       // comida consumida por pessoa por segundo
   },
+  // Fome, saúde, crescimento e morte (valores por segundo de jogo). Ajuste aqui para balancear.
+  survival: {
+    start: { hunger: 0, health: 100 },
+    lowFoodSeconds: 60,            // "comida baixa": a reserva acaba em menos de X segundos
+    hunger: {
+      risePerSecond: 1.0,          // velocidade da fome quando a cidade está sem comida (0→100 em 100 s)
+      recoverPerSecond: 2.0        // velocidade com que a fome some quando há comida
+    },
+    health: {
+      lossHungerThreshold: 40,     // fome acima disso começa a tirar saúde
+      maxLossPerSecond: 1.0,       // perda com fome em 100 (sem Enfermaria); cresce de 0 até este valor
+      recoveryPerSecond: 0.3,      // recuperação base
+      recoveryMaxHunger: 25,       // só recupera se a fome estiver até este valor e houver comida
+      lowFoodRecoveryMultiplier: 0.5   // recuperação com comida baixa
+    },
+    infirmary: { maxLossReduction: 0.6 },   // teto da redução de perda somando várias Enfermarias
+    growth: {
+      secondsPerPerson: 20,        // tempo para um novo habitante com saúde 100 e fome 0
+      maxHunger: 30,               // fome acima disso: sem crescimento (abaixo disso, cresce mais devagar)
+      minHealth: 40,               // saúde abaixo disso: sem crescimento
+      minFoodSeconds: 30           // reserva de comida mínima (segundos) para crescer
+    },
+    death: {
+      hunger: 90,                  // fome a partir daqui causa mortes
+      health: 15,                  // saúde até aqui causa mortes
+      secondsPerPerson: 15,        // uma morte a cada X segundos enquanto durar a condição
+      minPopulation: 1             // a população nunca cai abaixo disso (sem game over ainda)
+    },
+    alerts: { lowHealth: 40 }      // saúde abaixo disso mostra aviso de saúde baixa
+  },
   build: {
     gridSize: 10,               // a construção se encaixa numa grade de 10 px do mapa
     cancelClickTolerance: 4     // clique direito com menos de 4 px de movimento = cancelar
   },
   time: {
     timeScale: 1,         // velocidade do relógio do jogo
+    fastScale: 5,         // velocidade ao apertar F (ferramenta de teste)
     maxFrameDelta: 0.25   // evita saltos de tempo ao voltar de outra aba
   }
 };

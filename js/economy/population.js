@@ -16,6 +16,21 @@ class Population {
   get available() { return Math.max(0, this.total - this.occupied); }
   get overCapacity() { return this.total > this.capacity; }   // possível após demolir casas (ainda sem consequências)
 
+  // Crescimento e mortes passam por aqui para manter a regra total <= capacidade.
+  grow(n = 1) {
+    const added = Math.max(0, Math.min(n, this.capacity - this.total));
+    this.total += added;
+    return added;
+  }
+  remove(n = 1) {
+    const removed = Math.min(n, this.total);
+    this.total -= removed;
+    for (const b of this.buildings.all().slice().reverse()) {           // quem morreu deixa o posto de trabalho
+      while (this.occupied > this.total && b.workers > 0) b.workers--;
+    }
+    return removed;
+  }
+
   canAssign(b) {
     const max = b.def.workers.max;
     if (!max) return { ok: false, reason: 'Esta construção não usa trabalhadores' };

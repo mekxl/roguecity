@@ -2,7 +2,7 @@
 // Tamanhos em unidades do mundo (pixels do mapa). Escala do mapa: ~4,5 px por metro.
 // Campos em uso: housing (capacidade de população), workers.max (vagas) e
 // production.<recurso>.perWorker (produção por segundo, por trabalhador).
-// Campos reservados (cost, consumption, hp, defense, effects) ainda sem efeito.
+// effects.health (Enfermaria) também está em uso. Reservados: cost, consumption, hp, defense.
 function defineBuilding(def) {
   return {
     housing: 0, workers: { max: 0 }, production: {},
@@ -32,8 +32,9 @@ const BuildingDefs = {
   }),
   infirmary: defineBuilding({
     id: 'infirmary', name: 'Enfermaria', category: 'Saúde',
-    description: 'Cuidados com a saúde.',
-    // Sem trabalhadores nem efeito por enquanto. Futuro: workers.max, capacidade de atendimento, saúde.
+    description: 'Reduz a perda de saúde e acelera a recuperação.',
+    // Efeito de saúde (lido por economy/survival.js). Vale por Enfermaria, sem precisar de trabalhadores.
+    effects: { health: { lossReduction: 0.3, recoveryBonus: 0.3 } },   // -30% perda; +0,3/s de recuperação
     size: { w: 140, h: 120 }, visual: { kind: 'infirmary', color: '#e8e2d2' }
   }),
   tower: defineBuilding({

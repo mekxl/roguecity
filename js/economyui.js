@@ -1,17 +1,20 @@
 // Interface da economia. Só LÊ de Resources / Population / Economy: não guarda valores próprios.
 class ResourceBar {
-  constructor(resources, population, economy) {
-    this.resources = resources; this.population = population; this.economy = economy;
+  constructor(resources, population, economy, survival) {
+    this.resources = resources; this.population = population; this.economy = economy; this.survival = survival;
+    this.alertsEl = document.getElementById('hud-alerts');
     const root = document.getElementById('hud-resources');
     const make = html => {
       const el = document.createElement('span'); el.className = 'res'; el.innerHTML = html; root.appendChild(el);
-      return { el, val: el.querySelector('.val'), rate: el.querySelector('.rate') };
+      return { el, val: el.querySelector('.val'), rate: el.querySelector('.rate'), extra: el.querySelector('.extra') };
     };
     this.cells = {};
     for (const [id, d] of Object.entries(ResourceDefs)) {
       this.cells[id] = make(`<span>${d.icon} ${d.name}: <b class="val"></b></span><span class="rate"></span>`);
     }
-    this.pop = make('<span>👥 População: <b class="val"></b></span><span class="rate"></span>');
+    this.pop = make('<span>👥 População: <b class="val"></b></span><span class="rate"></span><span class="rate extra"></span>');
+    this.health = make('<span>❤️ Saúde: <b class="val"></b></span><span class="rate"></span><span class="rate extra"></span>');
+    this.hunger = make('<span>🍗 Fome: <b class="val"></b></span><span class="rate"></span>');
   }
 
   update() {
@@ -29,7 +32,53 @@ class ResourceBar {
     this.pop.val.textContent = `${p.total} / ${p.capacity}`;
     this.pop.rate.textContent = p.overCapacity ? 'acima da capacidade' : `ocupados ${p.occupied} · livres ${p.available}`;
     this.pop.rate.className = 'rate ' + (p.overCapacity ? 'neg' : '');
+
+    // Crescimento: sempre explica o motivo
+    const g = this.survival.growth;
+    this.pop.extra.textContent = g.blocked ? `Crescimento interrompido: ${BLOCK_TEXT[g.blocked]}`
+      : `Crescimento: +${g.perMinute.toFixed(1)}/min${g.multiplier < 0.999 ? ' (reduzido)' : ''}`;
+    this.pop.extra.className = 'rate extra ' + (g.blocked && g.blocked !== 'capacity' ? 'neg' : '');
+
+    // Saúde e fome (valores 0-100 vindos de Survival)
+    const sv = this.survival, inf = sv.infirmary;
+    this.health.val.textContent = Math.round(sv.health);
+    this.health.rate.textContent = sv.healthTrend < 0 ? '▼ caindo' : (sv.healthTrend > 0 && sv.health < 99.5 ? '▲ recuperando' : 'estável');
+    this.health.rate.className = 'rate ' + (sv.healthTrend < 0 ? 'neg' : (sv.healthTrend > 0 ? 'pos' : ''));
+    this.health.extra.textContent = inf.count ? `Enfermaria: −${Math.round(inf.lossReduction * 100)}% perda, +${inf.recoveryBonus.toFixed(1)}/s` : '';
+    this.health.el.classList.toggle('warn', sv.health < this.survival.cfg.alerts.lowHealth);
+
+    this.hunger.val.textContent = Math.round(sv.hunger);
+    this.hunger.rate.textContent = sv.hungerTrend > 0 ? '▲ aumentando' : (sv.hungerTrend < 0 ? '▼ diminuindo' : 'saudável');
+    this.hunger.rate.className = 'rate ' + (sv.hungerTrend > 0 ? 'neg' : (sv.hungerTrend < 0 ? 'pos' : ''));
+    this.hunger.el.classList.toggle('warn', sv.hunger >= this.survival.cfg.growth.maxHunger);
+
+    // Avisos de problema
+    this.alertsEl.hidden = sv.alerts.length === 0;
+    this.alertsEl.innerHTML = '';
+    for (const a of sv.alerts) {
+      const d = document.createElement('div');
+      d.className = 'alert ' + (BAD_ALERTS.includes(a.code) ? 'bad' : '');
+      d.textContent = alertText(a);
+      this.alertsEl.appendChild(d);
+    }
   }
+}
+
+const BLOCK_TEXT = {
+  food: 'falta de comida', reserve: 'reserva de comida baixa', hunger: 'fome',
+  health: 'saúde baixa', capacity: 'capacidade populacional máxima'
+};
+const BAD_ALERTS = ['food_empty', 'health_low', 'dying'];
+function alertText(a) {
+  switch (a.code) {
+    case 'food_empty': return '⚠ Cidade sem comida';
+    case 'food_low': return `⚠ Comida baixa: acaba em ~${Math.ceil(a.seconds)} s`;
+    case 'hunger_rising': return '⚠ Fome aumentando';
+    case 'health_low': return '⚠ Saúde baixa';
+    case 'health_falling': return '⚠ Saúde caindo';
+    case 'dying': return `⚠ A população está morrendo (mortes: ${a.deaths})`;
+  }
+  return a.code;
 }
 
 // Painel da construção selecionada: informações e atribuição de trabalhadores.
@@ -53,6 +102,11 @@ class BuildingInfoPanel {
       const name = ResourceDefs[res].name.toLowerCase();
       lines.push(`Por trabalhador: +${p.perWorker}/s de ${name}`);
       lines.push(`Produção atual: +${(p.perWorker * b.workers).toFixed(2)}/s`);
+    }
+    const eh = d.effects.health;
+    if (eh) {
+      lines.push(`Perda de saúde: −${Math.round(eh.lossReduction * 100)}%`);
+      lines.push(`Recuperação: +${eh.recoveryBonus}/s`);
     }
     this.title.textContent = d.name;
     this.desc.textContent = d.description;

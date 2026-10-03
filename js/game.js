@@ -27,13 +27,20 @@ class Game {
     this.resources = new Resources(Config.start);
     this.population = new Population(this.buildings, Config.start);
     this.economy = new Economy(this.resources, this.population, this.buildings, Config.economy);
-    this.resourceBar = new ResourceBar(this.resources, this.population, this.economy);
+    this.survival = new Survival(this.resources, this.population, this.economy, this.buildings, Config.survival);
+    this.resourceBar = new ResourceBar(this.resources, this.population, this.economy, this.survival);
     this.infoPanel = new BuildingInfoPanel(this.selection, this.population);
 
     // Ligações entre entrada e câmera
     this.input.on('wheel', e => this.camera.zoomAt(e.dir < 0 ? Config.camera.zoomStep : 1 / Config.camera.zoomStep, e.x, e.y));
     this.input.on('move', e => { if (e.buttons & 6) this.camera.dragBy(e.dx, e.dy); }); // botão direito/meio arrasta
-    this.input.on('key', e => { if (e.code === 'KeyP') this.clock.togglePause(); });
+    this.input.on('key', e => {
+      if (e.code === 'KeyP') this.clock.togglePause();
+      if (e.code === 'KeyF') {   // ferramenta de teste: acelera o tempo do jogo
+        const T = Config.time;
+        this.clock.timeScale = this.clock.timeScale === T.timeScale ? T.fastScale : T.timeScale;
+      }
+    });
 
     window.addEventListener('resize', () => this.resize());
     this.resize();
@@ -48,7 +55,7 @@ class Game {
     const need = ['Config', 'Phases', 'GameClock', 'GameMap', 'Camera', 'Input', 'Interaction', 'UI',
       'BuildingDefs', 'BuildingManager', 'PlacementValidator', 'BuildingView', 'BuildController',
       'BuildingSelection', 'BuildMenu', 'ResourceDefs', 'Resources', 'Population', 'Economy',
-      'ResourceBar', 'BuildingInfoPanel'];
+      'Survival', 'ResourceBar', 'BuildingInfoPanel'];
     const missing = need.filter(n => { try { return typeof eval(n) === 'undefined'; } catch (e) { return true; } });
     if (missing.length) throw new Error(`Arquivos faltando ou desatualizados. Não encontrei: ${missing.join(', ')}.\nEnvie todos os arquivos do projeto para o repositório.`);
   }
@@ -80,12 +87,13 @@ class Game {
     this.builder.update();
     this.selection.update();
     this.economy.update(gameDt);              // produção e consumo, no tempo de jogo (parado se pausado)
+    this.survival.update(gameDt);             // fome, saúde, crescimento e mortes
     this.buildMenu.update();
     this.resourceBar.update();
     this.infoPanel.update();
 
     this.ui.setPhase(this.phase, this.clock.paused);
-    this.ui.setClock(this.clock.format());
+    this.ui.setClock(this.clock.format() + (this.clock.timeScale !== Config.time.timeScale ? `  ×${this.clock.timeScale}` : ''));
     this.ui.setReadout(this.interaction.world, this.camera.zoom, this.interaction.inMap);
   }
 
