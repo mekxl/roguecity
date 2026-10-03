@@ -1,6 +1,7 @@
 // Gerenciador geral: cria os sistemas, liga um ao outro e roda o loop.
 class Game {
   async start() {
+    this.checkFiles();
     this.canvas = document.getElementById('game');
     this.ctx = this.canvas.getContext('2d');
     this.ui = new UI();
@@ -20,6 +21,15 @@ class Game {
     this.builder = new BuildController(this.input, this.interaction, this.buildings, this.validator);
     this.buildMenu = new BuildMenu(this.builder, this.input, this.canvas);
 
+    this.selection = new BuildingSelection(this.input, this.interaction, this.buildings, this.builder);
+
+    // Economia e população: fontes únicas de verdade
+    this.resources = new Resources(Config.start);
+    this.population = new Population(this.buildings, Config.start);
+    this.economy = new Economy(this.resources, this.population, this.buildings, Config.economy);
+    this.resourceBar = new ResourceBar(this.resources, this.population, this.economy);
+    this.infoPanel = new BuildingInfoPanel(this.selection, this.population);
+
     // Ligações entre entrada e câmera
     this.input.on('wheel', e => this.camera.zoomAt(e.dir < 0 ? Config.camera.zoomStep : 1 / Config.camera.zoomStep, e.x, e.y));
     this.input.on('move', e => { if (e.buttons & 6) this.camera.dragBy(e.dx, e.dy); }); // botão direito/meio arrasta
@@ -28,8 +38,19 @@ class Game {
     window.addEventListener('resize', () => this.resize());
     this.resize();
     this.ui.hideLoading();
+    Boot.started = true;
     this.last = performance.now();
     requestAnimationFrame(t => this.frame(t));
+  }
+
+  // Avisa na tela se algum arquivo estiver faltando ou desatualizado.
+  checkFiles() {
+    const need = ['Config', 'Phases', 'GameClock', 'GameMap', 'Camera', 'Input', 'Interaction', 'UI',
+      'BuildingDefs', 'BuildingManager', 'PlacementValidator', 'BuildingView', 'BuildController',
+      'BuildingSelection', 'BuildMenu', 'ResourceDefs', 'Resources', 'Population', 'Economy',
+      'ResourceBar', 'BuildingInfoPanel'];
+    const missing = need.filter(n => { try { return typeof eval(n) === 'undefined'; } catch (e) { return true; } });
+    if (missing.length) throw new Error(`Arquivos faltando ou desatualizados. Não encontrei: ${missing.join(', ')}.\nEnvie todos os arquivos do projeto para o repositório.`);
   }
 
   resize() {
@@ -57,7 +78,11 @@ class Game {
     this.camera.update(realDt);
     this.interaction.update();
     this.builder.update();
+    this.selection.update();
+    this.economy.update(gameDt);              // produção e consumo, no tempo de jogo (parado se pausado)
     this.buildMenu.update();
+    this.resourceBar.update();
+    this.infoPanel.update();
 
     this.ui.setPhase(this.phase, this.clock.paused);
     this.ui.setClock(this.clock.format());
@@ -71,9 +96,12 @@ class Game {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     camera.apply(ctx, this.dpr);
     this.map.draw(ctx, camera.visibleRect(), camera.zoom);
-    BuildingView.drawAll(ctx, this.buildings, this.builder);
+    BuildingView.drawAll(ctx, this.buildings, this.builder, this.selection.selected);
     this.interaction.draw(ctx, camera.zoom);
   }
 }
 
-window.addEventListener('load', () => new Game().start());
+window.addEventListener('load', () => {
+  window.game = new Game();     // acessível no Console (F12) para testes: game.resources, game.population...
+  window.game.start().catch(err => Boot.fail(`Erro ao iniciar o jogo:\n${err.message}\n\nVeja detalhes no Console (F12).`));
+});
