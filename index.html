@@ -16,6 +16,16 @@
     <div id="hud-readout" class="hud-box"></div>
   </div>
 
+  <div id="build-ui">
+    <div id="build-panel" hidden></div>
+    <div id="build-status" hidden></div>
+    <div id="build-bar">
+      <button id="btn-build">Construir (B)</button>
+      <button id="btn-demolish">Demolir (X)</button>
+      <button id="btn-cancel">Cancelar (Esc)</button>
+    </div>
+  </div>
+
   <div id="notice" hidden></div>
   <div id="loading">Carregando mapa…</div>
 
@@ -26,7 +36,13 @@
   <script src="js/camera.js"></script>
   <script src="js/input.js"></script>
   <script src="js/interaction.js"></script>
+  <script src="js/building/definitions.js"></script>
+  <script src="js/building/manager.js"></script>
+  <script src="js/building/validation.js"></script>
+  <script src="js/building/views.js"></script>
+  <script src="js/building/builder.js"></script>
   <script src="js/ui.js"></script>
+  <script src="js/buildmenu.js"></script>
   <script src="js/game.js"></script>
 </body>
 </html>
