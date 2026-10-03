@@ -12,6 +12,10 @@ const Config = {
     maxZoom: 2,
     minZoomFactor: 0.8    // zoom mínimo = (zoom que enquadra o mapa inteiro) * este fator
   },
+  build: {
+    gridSize: 10,               // a construção se encaixa numa grade de 10 px do mapa
+    cancelClickTolerance: 4     // clique direito com menos de 4 px de movimento = cancelar
+  },
   time: {
     timeScale: 1,         // velocidade do relógio do jogo
     maxFrameDelta: 0.25   // evita saltos de tempo ao voltar de outra aba
