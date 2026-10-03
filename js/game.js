@@ -15,6 +15,11 @@ class Game {
     this.input = new Input(this.canvas);
     this.interaction = new Interaction(this.input, this.camera, this.map);
 
+    this.buildings = new BuildingManager();
+    this.validator = new PlacementValidator(this.map, this.buildings);
+    this.builder = new BuildController(this.input, this.interaction, this.buildings, this.validator);
+    this.buildMenu = new BuildMenu(this.builder, this.input, this.canvas);
+
     // Ligações entre entrada e câmera
     this.input.on('wheel', e => this.camera.zoomAt(e.dir < 0 ? Config.camera.zoomStep : 1 / Config.camera.zoomStep, e.x, e.y));
     this.input.on('move', e => { if (e.buttons & 6) this.camera.dragBy(e.dx, e.dy); }); // botão direito/meio arrasta
@@ -51,6 +56,8 @@ class Game {
     if (dx || dy) this.camera.move(dx, dy, realDt, i.isDown('ShiftLeft', 'ShiftRight'));
     this.camera.update(realDt);
     this.interaction.update();
+    this.builder.update();
+    this.buildMenu.update();
 
     this.ui.setPhase(this.phase, this.clock.paused);
     this.ui.setClock(this.clock.format());
@@ -64,6 +71,7 @@ class Game {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     camera.apply(ctx, this.dpr);
     this.map.draw(ctx, camera.visibleRect(), camera.zoom);
+    BuildingView.drawAll(ctx, this.buildings, this.builder);
     this.interaction.draw(ctx, camera.zoom);
   }
 }
