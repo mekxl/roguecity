@@ -12,13 +12,19 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: var(--ink); 
 #hud {
   position: fixed; inset: 0; pointer-events: none;
   font-family: var(--font); color: var(--parchment);
-  display: flex; flex-wrap: wrap; align-items: flex-start;
-  padding: 12px; gap: 12px;
+  display: flex; flex-direction: column; align-items: flex-start;
+  padding: 12px; gap: 8px;
 }
 .hud-box {
   background: rgba(27, 23, 18, 0.88); border: 1px solid var(--brass);
   padding: 6px 14px; font-size: 16px; letter-spacing: 0.02em;
 }
+#hud-top { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 12px; width: 100%; }
+#hud-alerts { display: flex; flex-direction: column; gap: 3px; font-size: 14px; }
+#hud-alerts[hidden] { display: none; }
+.alert { background: rgba(27, 23, 18, 0.9); border-left: 4px solid #d9a441; padding: 3px 10px; }
+.alert.bad { border-left-color: #c0392b; color: #f0b3aa; }
+.res.warn .val { color: #f0b3aa; }
 #hud-resources { order: 0; flex: 1 1 auto; display: flex; flex-wrap: wrap; gap: 6px 22px; }
 #hud-clock { order: 1; margin-left: auto; font-size: 20px; font-variant-numeric: tabular-nums; }
 #hud-phase { order: 2; }
