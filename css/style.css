@@ -40,3 +40,33 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: var(--ink); 
   background: var(--ink); color: var(--parchment); font: 20px var(--font);
 }
 #loading.done { display: none; }
+
+/* ---- Construção ---- */
+#build-ui {
+  position: fixed; left: 50%; bottom: 12px; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  font-family: var(--font); color: var(--parchment); pointer-events: none;
+}
+#build-ui button, #build-panel, #build-status { pointer-events: auto; }
+#build-bar { display: flex; gap: 8px; }
+#build-bar button, .build-item {
+  font: 15px var(--font); color: var(--parchment); cursor: pointer;
+  background: rgba(27, 23, 18, 0.92); border: 1px solid var(--brass); padding: 7px 14px;
+}
+#build-bar button:hover:not(:disabled), .build-item:hover { background: var(--iron); }
+#build-bar button.active, .build-item.active { background: var(--brass); color: var(--ink); }
+#build-bar button:disabled { opacity: .4; cursor: default; }
+#build-bar button:focus-visible, .build-item:focus-visible { outline: 2px solid var(--parchment); outline-offset: 2px; }
+#build-panel {
+  display: grid; grid-template-columns: repeat(3, 150px); gap: 8px; padding: 8px;
+  background: rgba(27, 23, 18, 0.92); border: 1px solid var(--brass);
+}
+#build-panel[hidden], #build-status[hidden] { display: none; }
+.build-item { display: grid; grid-template-columns: 18px 1fr; column-gap: 8px; text-align: left; align-items: center; }
+.build-item .swatch { grid-row: span 2; width: 18px; height: 18px; border: 1px solid var(--ink); }
+.build-item .meta { font-size: 12px; opacity: .75; }
+#build-status {
+  padding: 5px 12px; font-size: 14px; background: rgba(27, 23, 18, 0.92); border: 1px solid var(--brass);
+}
+#build-status.bad { border-color: #c0392b; color: #f0b3aa; }
+@media (max-width: 560px) { #build-panel { grid-template-columns: repeat(2, 150px); } }
