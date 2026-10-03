@@ -26,23 +26,41 @@
     </div>
   </div>
 
+  <div id="building-info" hidden>
+    <div id="bi-title"></div>
+    <div id="bi-desc"></div>
+    <div id="bi-stats"></div>
+    <div id="bi-workers" hidden>
+      <span id="bi-count"></span>
+      <button id="bi-minus" aria-label="Remover trabalhador">−</button>
+      <button id="bi-plus" aria-label="Adicionar trabalhador">+</button>
+    </div>
+    <div id="bi-hint"></div>
+  </div>
+
   <div id="notice" hidden></div>
   <div id="loading">Carregando mapa…</div>
 
   <!-- Ordem importa: não usamos módulos ES para o jogo abrir direto do index.html (file://) -->
-  <script src="js/config.js"></script>
-  <script src="js/time.js"></script>
-  <script src="js/map.js"></script>
-  <script src="js/camera.js"></script>
-  <script src="js/input.js"></script>
-  <script src="js/interaction.js"></script>
-  <script src="js/building/definitions.js"></script>
-  <script src="js/building/manager.js"></script>
-  <script src="js/building/validation.js"></script>
-  <script src="js/building/views.js"></script>
-  <script src="js/building/builder.js"></script>
-  <script src="js/ui.js"></script>
-  <script src="js/buildmenu.js"></script>
-  <script src="js/game.js"></script>
+  <script src="js/boot.js?v=3"></script>
+  <script src="js/config.js?v=3"></script>
+  <script src="js/time.js?v=3"></script>
+  <script src="js/map.js?v=3"></script>
+  <script src="js/camera.js?v=3"></script>
+  <script src="js/input.js?v=3"></script>
+  <script src="js/interaction.js?v=3"></script>
+  <script src="js/building/definitions.js?v=3"></script>
+  <script src="js/building/manager.js?v=3"></script>
+  <script src="js/building/validation.js?v=3"></script>
+  <script src="js/building/views.js?v=3"></script>
+  <script src="js/building/builder.js?v=3"></script>
+  <script src="js/building/selection.js?v=3"></script>
+  <script src="js/economy/resources.js?v=3"></script>
+  <script src="js/economy/population.js?v=3"></script>
+  <script src="js/economy/economy.js?v=3"></script>
+  <script src="js/ui.js?v=3"></script>
+  <script src="js/buildmenu.js?v=3"></script>
+  <script src="js/economyui.js?v=3"></script>
+  <script src="js/game.js?v=3"></script>
 </body>
 </html>
