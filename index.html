@@ -11,11 +11,16 @@
 
   <div id="hud">
     <div id="hud-top">
-      <div id="hud-phase" class="hud-box"></div>
+      <div id="hud-phase" class="hud-box">
+        <div id="ph-wave"></div>
+        <div id="ph-name"></div>
+        <div id="ph-count"></div>
+      </div>
       <div id="hud-clock" class="hud-box">TEMPO: 00:00</div>
       <div id="hud-resources" class="hud-box"></div>
     </div>
     <div id="hud-alerts" hidden></div>
+    <div id="hud-forces" class="hud-box"></div>
     <div id="hud-readout" class="hud-box"></div>
   </div>
 
@@ -25,8 +30,19 @@
     <div id="build-bar">
       <button id="btn-build">Construir (B)</button>
       <button id="btn-demolish">Demolir (X)</button>
+      <button id="btn-military">Militar (M)</button>
       <button id="btn-cancel">Cancelar (Esc)</button>
     </div>
+  </div>
+
+  <div id="military-panel" hidden>
+    <div id="mil-head"></div>
+  </div>
+
+  <div id="unit-info" hidden>
+    <div id="un-title"></div>
+    <div id="un-state"></div>
+    <div id="un-stats"></div>
   </div>
 
   <div id="building-info" hidden>
@@ -41,30 +57,46 @@
     <div id="bi-hint"></div>
   </div>
 
+  <div id="phase-banner" hidden>
+    <div id="pb-main"></div>
+    <div id="pb-sub"></div>
+    <div id="pb-note"></div>
+  </div>
+
   <div id="notice" hidden></div>
   <div id="loading">Carregando mapa…</div>
 
   <!-- Ordem importa: não usamos módulos ES para o jogo abrir direto do index.html (file://) -->
-  <script src="js/boot.js?v=4"></script>
-  <script src="js/config.js?v=4"></script>
-  <script src="js/time.js?v=4"></script>
-  <script src="js/map.js?v=4"></script>
-  <script src="js/camera.js?v=4"></script>
-  <script src="js/input.js?v=4"></script>
-  <script src="js/interaction.js?v=4"></script>
-  <script src="js/building/definitions.js?v=4"></script>
-  <script src="js/building/manager.js?v=4"></script>
-  <script src="js/building/validation.js?v=4"></script>
-  <script src="js/building/views.js?v=4"></script>
-  <script src="js/building/builder.js?v=4"></script>
-  <script src="js/building/selection.js?v=4"></script>
-  <script src="js/economy/resources.js?v=4"></script>
-  <script src="js/economy/population.js?v=4"></script>
-  <script src="js/economy/economy.js?v=4"></script>
-  <script src="js/economy/survival.js?v=4"></script>
-  <script src="js/ui.js?v=4"></script>
-  <script src="js/buildmenu.js?v=4"></script>
-  <script src="js/economyui.js?v=4"></script>
-  <script src="js/game.js?v=4"></script>
+  <script src="js/boot.js?v=6"></script>
+  <script src="js/config.js?v=6"></script>
+  <script src="js/events.js?v=6"></script>
+  <script src="js/phase/phasesystem.js?v=6"></script>
+  <script src="js/time.js?v=6"></script>
+  <script src="js/map.js?v=6"></script>
+  <script src="js/camera.js?v=6"></script>
+  <script src="js/input.js?v=6"></script>
+  <script src="js/interaction.js?v=6"></script>
+  <script src="js/building/definitions.js?v=6"></script>
+  <script src="js/building/manager.js?v=6"></script>
+  <script src="js/building/validation.js?v=6"></script>
+  <script src="js/building/views.js?v=6"></script>
+  <script src="js/building/builder.js?v=6"></script>
+  <script src="js/building/selection.js?v=6"></script>
+  <script src="js/economy/resources.js?v=6"></script>
+  <script src="js/economy/population.js?v=6"></script>
+  <script src="js/economy/economy.js?v=6"></script>
+  <script src="js/economy/survival.js?v=6"></script>
+  <script src="js/military/unitdefs.js?v=6"></script>
+  <script src="js/military/units.js?v=6"></script>
+  <script src="js/military/movement.js?v=6"></script>
+  <script src="js/military/recruitment.js?v=6"></script>
+  <script src="js/military/unitselection.js?v=6"></script>
+  <script src="js/military/unitview.js?v=6"></script>
+  <script src="js/ui.js?v=6"></script>
+  <script src="js/buildmenu.js?v=6"></script>
+  <script src="js/economyui.js?v=6"></script>
+  <script src="js/militaryui.js?v=6"></script>
+  <script src="js/phaseui.js?v=6"></script>
+  <script src="js/game.js?v=6"></script>
 </body>
 </html>
