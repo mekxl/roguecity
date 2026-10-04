@@ -14,6 +14,15 @@ class Resources {
   }
   _check(id) { if (!(id in this.stock)) throw new Error(`Recurso desconhecido: "${id}"`); }
   get(id) { this._check(id); return this.stock[id]; }
+  // Custos: { wood: 10, stone: 5 }
+  missing(cost) { return Object.entries(cost).filter(([id, n]) => this.get(id) < n).map(([id, n]) => [id, n - this.get(id)]); }
+  canAfford(cost) { return this.missing(cost).length === 0; }
+  spend(cost) {
+    if (!this.canAfford(cost)) return false;
+    for (const [id, n] of Object.entries(cost)) this.stock[id] -= n;
+    return true;
+  }
+
   // Soma (ou subtrai, se negativo). O estoque nunca fica abaixo de zero.
   add(id, amount) {
     this._check(id);

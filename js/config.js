@@ -53,6 +53,21 @@ const Config = {
     },
     alerts: { lowHealth: 40 }      // saúde abaixo disso mostra aviso de saúde baixa
   },
+  // Ciclo de fases da partida
+  phases: {
+    preparationDuration: 60,   // duração da PREPARAÇÃO em segundos (padrão do jogo)
+    warningSeconds: 10,        // aviso visual nos últimos X segundos
+    countdownSeconds: 5        // contagem grande nos últimos X segundos
+  },
+  // Forças militares
+  military: {
+    baseCapacity: 10,              // máximo de soldados (construções podem somar via def.militaryCapacity)
+    spawn: { x: 2650, y: 2620 },   // onde os recrutas aparecem (Castelo, no mapa bakers_cliff.png)
+    formationSpacing: 70,          // distância entre unidades ao mover um grupo
+    minScreenRadius: 7,            // tamanho mínimo na tela (px) para enxergar com zoom afastado
+    minHitRadius: 12,              // área mínima de clique (px de tela)
+    dragSelectTolerance: 6         // px arrastados até virar caixa de seleção
+  },
   build: {
     gridSize: 10,               // a construção se encaixa numa grade de 10 px do mapa
     cancelClickTolerance: 4     // clique direito com menos de 4 px de movimento = cancelar
@@ -64,10 +79,18 @@ const Config = {
   }
 };
 
+// Teste rápido SEM mexer no código: abra o jogo com ?prep=10 (ex.: index.html?prep=10)
+// para uma preparação de 10 s. Sem o parâmetro vale o padrão acima (60 s).
+{
+  const prep = Number(new URLSearchParams(window.location.search).get('prep'));
+  if (prep > 0) { Config.phases.preparationDuration = prep; Config.phases.testOverride = true; }
+}
+
 // Fases do ciclo: preparação → onda → resultado → nova preparação.
-// Nesta etapa apenas PREPARATION é usada.
+// Nesta etapa só PREPARATION e TRANSITION são usadas.
 const Phases = Object.freeze({
   PREPARATION: 'Preparação',
+  TRANSITION: 'Transição',      // fim da preparação; será substituída pela horda
   WAVE: 'Onda',
   RESULT: 'Resultado'
 });

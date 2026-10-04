@@ -30,7 +30,7 @@ class ResourceBar {
 
     const p = this.population;
     this.pop.val.textContent = `${p.total} / ${p.capacity}`;
-    this.pop.rate.textContent = p.overCapacity ? 'acima da capacidade' : `ocupados ${p.occupied} · livres ${p.available}`;
+    this.pop.rate.textContent = p.overCapacity ? 'acima da capacidade' : `trabalhadores ${p.occupied} · soldados ${p.soldiers} · livres ${p.available}`;
     this.pop.rate.className = 'rate ' + (p.overCapacity ? 'neg' : '');
 
     // Crescimento: sempre explica o motivo
